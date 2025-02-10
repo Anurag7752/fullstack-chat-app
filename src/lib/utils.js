@@ -1,8 +1,16 @@
-export function formatMessageTime(data) {
-    return new DataTransfer(data).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
+import jwt from "jsonwebtoken";
+
+export const generateToken = (userId, res) => {
+    const token = jwt.sign({userId}, process.env.JWT_SECRET, {
+        expiresIn: "7d",
     });
-    
-}
+
+    res.cookie("jwt", token, {
+        nextAge: 7*24*60*60*1000, //ms
+        httpOnly: true,
+        sameSite: "Strick",
+        secure: process.env.NODE_ENV !== "development",
+    });
+
+    return token;
+};
